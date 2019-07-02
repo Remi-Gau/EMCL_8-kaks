@@ -54,8 +54,8 @@ screen_ID = max(Screen('Screens'));
 % Open 'windowrect' sized window on screen
 [win win_rect] = Screen('OpenWindow', screen_ID, opt.background);
 
-win_w = (win_rect(3) - win_rect(1))
-win_h = (win_rect(4) - win_rect(2))
+win_w = (win_rect(3) - win_rect(1));
+win_h = (win_rect(4) - win_rect(2));
 
 srcRect = [0 0 width height];
 
@@ -136,7 +136,7 @@ end
 
 % Type answer
 instruction_text = 'Type your answer and press ENTER when finished.   ';
-[response_text] = type_answer(instruction_text, win, response_box, opt)
+[response_text] = type_answer(instruction_text, win, response_box, opt);
 
 
 % Boundary question
@@ -145,31 +145,14 @@ DrawFormattedText(win, 'Now mark the beginning and the end of this event.\n\n\nL
 Screen('Flip', win);
 
 
-% Boundary marking
-[movie] = Screen('OpenMovie', win, movie_name, 4, 4, 2);
-
-% We run playback at 100x the normal speed, non-looped, without sound:
-Screen('PlayMovie', movie, 100, 0, 0);
-
-% Movie to texture conversion loop:
-movietexture=1;     % Texture handle for the current movie frame.
-count=1;
-while movietexture>=0
-    [movietexture pts] = Screen('GetMovieImage', win, movie, 1);
-    texids(count) = movietexture;
-    texpts(count) = pts;
-    count = count + 1;
-end
-
-% Stop "playback":
-Screen('PlayMovie', movie, 0, 0, 0);
-
-% Close movie:
-Screen('CloseMovie', movie);
+% Load movie
+texids = load_movie(movie_name, win);
 
 
 % Browse and Draw loop:
+count = numel(texids);
 currentindex=1;
+
 
 while(count>0)
     % Draw texture 'currentindex'
@@ -185,7 +168,7 @@ while(count>0)
     Screen('Flip', win);
     
     % Check for key press:
-    [keyIsDown, secs, keyCode]=KbCheck;
+    [keyIsDown, secs, keyCode] = KbCheck;
     if keyIsDown
         if (keyCode(opt.esc))
             clean_up(response_box)
@@ -210,7 +193,6 @@ while(count>0)
     end
 
 end
-
 
 clear texids texpts
 
