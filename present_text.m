@@ -16,7 +16,7 @@ while 1
         time_secs = first_press(find(first_press));
         key_code = min(find(first_press));
 
-        if first_press(opt.next)
+        if first_press(opt.return)
             RT = 666;
             break
         end

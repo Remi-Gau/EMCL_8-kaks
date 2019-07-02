@@ -38,12 +38,10 @@ ListenChar(0)
 response_box = min(keyboard_numbers); % For key presses for the
 
 % Defines keys
-opt.esc = KbName('ESCAPE'); % Quit keyCode
-opt.return = KbName('return'); % Next kecide
-opt.next = KbName('space'); % Next kecide
-
-right=KbName('RightArrow');
-left=KbName('LeftArrow');
+opt.esc = KbName('ESCAPE');
+opt.return = KbName('return'); 
+opt.right = KbName('RightArrow');
+opt.left = KbName('LeftArrow');
 
 
 %% Screen init
@@ -86,7 +84,7 @@ Priority(MaxPriority(win));
 
 
 %% Instruction
-instruction = 'Instruction. Press the space bar to move on.';
+instruction = 'Instruction. Press ENTER to move on.';
 
 [instruction_onset, RT] = present_text(instruction, win, response_box, opt);
 if RT==666
@@ -105,7 +103,10 @@ StartExpTime = GetSecs;
 
 %% Trial
 
+
 movie_name = 'D:\github\EMCL_8-kaks\inputs\videos\CATCH.mp4';
+question = 'What did the BOY do?';
+
 
 % draw fixation at beginning of experiment
 DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
@@ -113,65 +114,30 @@ Screen('Flip', win);
 WaitSecs(opt.dur_fix_cross)
 
 
-% Question 1
-question_1 = 'What did the boy do?'
-[instruction_onset, RT] = present_text(question_1, win, response_box, opt);
+% Question
+[instruction_onset, RT] = present_text(question, win, response_box, opt);
 if RT==666
-    clean_up(response_box)
+    clean_up(response_box);
     return
 end
 
 
 % Show movie
-play_movie(movie_name, win)
+play_movie(movie_name, win);
 
 
-% Question 1
-question_1 = 'What did the BOY do?'
-[instruction_onset, RT] = present_text(question_1, win, response_box, opt);
+% Question
+[instruction_onset, RT] = present_text(question, win, response_box, opt);
 if RT==666
-    clean_up(response_box)
+    clean_up(response_box);
     return
 end
 
+
 % Type answer
-response_text = [];
-DrawFormattedText(win, ...
-    ['Type your answer and press ENTER when finished.' response_text], ...
-    'center' , 'center' , opt.text_color);
-Screen('Flip', win);
+instruction_text = 'Type your answer and press ENTER when finished.   ';
+[response_text] = type_answer(instruction_text, win, response_box, opt)
 
-KbQueueCreate(response_box);
-KbQueueStart(response_box);
-while 1
-    
-    [pressed, first_press] = KbQueueCheck(response_box);
-
-    if pressed
-        
-        time_secs = first_press(find(first_press));
-        key_code = min(find(first_press));
-        key_name = KbName(key_code);
-        
-        if first_press(opt.return)
-            break
-        end
-        
-        if first_press(opt.esc)
-            clean_up(response_box)
-            return
-        end
-        
-        response_text = [response_text key_name];
-        DrawFormattedText(win, ...
-            ['Type your answer and press ENTER when finished.  ' response_text], ...
-            'center' , 'center' , opt.text_color);
-        Screen('Flip', win);
-
-    end
-    
-end
-KbQueueRelease(response_box);
 
 % Boundary question
 DrawFormattedText(win, 'Now mark the beginning and the end of this event.\n\n\nLOADING...',...
@@ -212,7 +178,8 @@ while(count>0)
 
     % Draw some help text:
     [x, y]=Screen('DrawText', win, ...
-        'Now mark the beginning and the end of this event\n\n Press left / right cursor key to navigate in movie, ESC to exit.',10, 40);
+        'Now mark the beginning and the end of this event\n\n Press left / right cursor key to navigate in movie, ESC to exit.',...
+        10, 40, 0);
     
     % Show drawn stuff:
     Screen('Flip', win);
@@ -225,15 +192,15 @@ while(count>0)
             return
         end
         
-        if (keyCode(opt.next))
+        if (keyCode(opt.return))
             break
         end
         
-        if (keyCode(right) && currentindex<count)
+        if (keyCode(opt.right) && currentindex<count)
             % One frame forward:
             currentindex=currentindex+1;
         end
-        if (keyCode(left) && currentindex>1)
+        if (keyCode(opt.left) && currentindex>1)
             % One frame backward:
             currentindex=currentindex-1;
         end
