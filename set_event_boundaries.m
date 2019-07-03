@@ -8,14 +8,19 @@ oval_radius = win_w/75;
 
 line_height = win_h*19/20;
 
+circle_color = [
+    255 0 0;
+    0 0 255];
+
 count = numel(texids);
 
 currentindex = 1;
 
 SetMouse(0, win_h)
-x = GetMouse;
 
 while 1
+    
+    x = GetMouse;
     
     if currentindex <= 0 
         currentindex = 1;
@@ -27,6 +32,7 @@ while 1
     
     oval_rect = get_oval_rect(x, oval_radius, line_height);
     
+    
     % Draw texture 'currentindex'
     Screen('DrawTexture', win, texids(currentindex));
 
@@ -34,14 +40,20 @@ while 1
     
     Screen('FillOval', win, [0 0 0], oval_rect);
     
+    
     % Add selected frames
     if ~isnan(frames)
+        if numel(frames)>2 || [numel(unique(frames))==1 && numel(frames)>1]
+            frames = NaN;
+            drawn_circles = 0;
+        end
         for i_oval = 1:numel(frames)
             oval_rect = get_oval_rect(frames(i_oval), oval_radius*1.2, line_height);
-            Screen('FillOval', win, [0 0 255], oval_rect);
+            Screen('FillOval', win, circle_color(i_oval,:), oval_rect);
         end
     end
 
+    
     % Show drawn stuff
     Screen('Flip', win);
     
@@ -51,13 +63,13 @@ while 1
     
     currentindex = round(x/win_w*count);
     
-    % collect clicked frames
-    if numel(frames)<2
-        if any(buttons) && x~=frames(end)
-            drawn_circles = drawn_circles + 1;
-            frames(drawn_circles) = x; 
-        end
+    % collect clicked frames 
+    if any(buttons) && x~=frames(end)
+        drawn_circles = drawn_circles + 1;
+        frames(drawn_circles) = x;
+        clear buttons x
     end
+    
 
     % Check for key press to get out
     [keyIsDown, ~, keyCode] = KbCheck;
@@ -68,7 +80,7 @@ while 1
             break
         end
 
-        if (keyCode(opt.return))
+        if (keyCode(opt.return)) && numel(frames)==2
             break
         end
 
@@ -76,6 +88,7 @@ while 1
 
 end
 
+% for output
 frames = round(frames/win_w*count);
 
 end
