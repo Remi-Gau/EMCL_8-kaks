@@ -6,9 +6,9 @@ language = 'estonian';
 
 source_folder = fullfile(pwd, 'inputs');
 
-opt.background = 0; % black background
+opt.background = 255; % black background
 
-opt.text_color = 255; % white text
+opt.text_color = 0; % white text
 opt.font = 'Arial';
 opt.fontsize = 40;
 
