@@ -49,7 +49,10 @@ opt.left = KbName('LeftArrow');
 screen_ID = max(Screen('Screens'));
 
 % Open 'windowrect' sized window on screen
-[win win_rect] = Screen('OpenWindow', screen_ID, opt.background);
+[win, win_rect] = Screen('OpenWindow', screen_ID, opt.background);
+
+win_w = (win_rect(3) - win_rect(1));
+win_h = (win_rect(4) - win_rect(2));
 
 % Child protection: Make sure we run on the OSX / OpenGL Psychtoolbox.
 % Abort if we don't:
@@ -120,7 +123,7 @@ end
 
 % Type answer
 instruction_text = 'Type your answer and press ENTER when finished.   ';
-[response_text] = type_answer(instruction_text, win, response_box, opt);
+[response_text] = type_answer(instruction_text, win, win_w, win_h, response_box, opt);
 
 
 % Boundary question
