@@ -139,7 +139,7 @@ present_text(instruction, win, response_box, opt);
 
 
 % Set boundary of the event
-frames = set_event_boundaries(texids, win, win_w, win_h, opt);
+frames = set_event_boundaries(texids, win, win_w, win_h, opt)
 if frames==666
     clean_up(response_box);
     return
