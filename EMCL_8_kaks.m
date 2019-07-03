@@ -8,15 +8,6 @@ opt.text_color = 255; % white text
 opt.font = 'Arial';
 opt.fontsize = 40;
 
-% Parameters to cut the movies
-height = 576;
-width = 720;
-
-scale = .8; 
-
-hor_offset = 0;
-vert_offset = 0;
-
 opt.dur_fix_cross = 1;
 
 Screen('Preference', 'SkipSyncTests', 1)
@@ -53,17 +44,6 @@ screen_ID = max(Screen('Screens'));
 
 % Open 'windowrect' sized window on screen
 [win win_rect] = Screen('OpenWindow', screen_ID, opt.background);
-
-win_w = (win_rect(3) - win_rect(1));
-win_h = (win_rect(4) - win_rect(2));
-
-srcRect = [0 0 width height];
-
-dstRect = [...
-    ((win_w - scale*width)/2) - hor_offset*win_w ...
-    ((win_h - scale*height)/2) - vert_offset*win_h ...
-    ((win_w + scale*width)/2) - hor_offset*win_w ...
-    ((win_h + scale*height)/2) - vert_offset* win_h];
 
 % Child protection: Make sure we run on the OSX / OpenGL Psychtoolbox.
 % Abort if we don't:
