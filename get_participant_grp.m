@@ -3,10 +3,10 @@ switch subj_gr
     case 1
         question_type_list = {
             'P'
-            'P'
-            'A'
             'A'
             'N'
+            'P'
+            'A'
             'N'
             'I'
             'I'
@@ -18,10 +18,10 @@ switch subj_gr
     case 2
         question_type_list = {
             'A'
-            'A'
-            'N'
             'N'
             'P'
+            'A'
+            'N'
             'P'
             'I'
             'I'
@@ -33,11 +33,11 @@ switch subj_gr
     case 3
         question_type_list = {
             'N'
+            'A'
+            'P'
             'N'
-            'P'
-            'P'
             'A'
-            'A'
+            'P'
             'I'
             'I'
             'I'

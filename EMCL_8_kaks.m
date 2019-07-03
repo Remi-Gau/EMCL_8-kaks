@@ -18,7 +18,7 @@ comp_prefix = 'r'; % r - Remi ; l - Liis ; n - Norbert ???
 
 language = 'estonian';
 
-debug = 1;
+debug = 0;
 
 opt.background = 255; % black background
 
@@ -30,8 +30,8 @@ opt.dur_fix_cross = 1;
 
 % videos_list = {...
 %     'Squash';...
-%     'KnockOver'
-%     'Kick'...
+%     'KnockOver';...
+%     'Kick';...
 %     'Unhook';
 %     'Catch';...
 %     'Ripoff';...
@@ -44,20 +44,24 @@ opt.dur_fix_cross = 1;
 %     };
 
 % question list
-% {'Mis ARBUUSIGA tehti?'  }
-% {'Mis KOONUSEGA tehti?'  }
-% {'Mis JALGPALLIGA tehti?'}
-% {'Mis VÕTMEGA tehti?'    }
-% {'Mis LEHEGA tehti?'     }
-% {'Mis PLAKATIGA tehti?'  }
-% {'Mida NOAGA tehti?'     }
-% {'Mida KIRVEGA tehti?'   }
-% {'Mida VASARAGA tehti?'  }
-% {'Mida NÕELAGA tehti?'   }
-% {'Mida REKETIGA tehti?'  }
-% {'Mida TEKIGA tehti?'    }
+% questions.patient = {...
+%     'Mida ARBUUSIGA tehti?'; ...
+%     'Mida KOONUSEGA tehti?'; ...
+%     'Mida JALGPALLIGA tehti?'; ...
+%     'Mida VÕTMEGA tehti?'; ...
+%     'Mida LEHEGA tehti?'; ...
+%     'Mida PLAKATIGA tehti?'; ...
+%     };
+% questions.instrument = {...
+%     'Mida NOAGA tehti?'; ...
+%     'Mida KIRVEGA tehti?'; ...
+%     'Mida VASARAGA tehti?'; ...
+%     'Mida NÕELAGA tehti?'; ...
+%     'Mida REKETIGA tehti?'; ...
+%     'Mida TEKIGA tehti?'; ...
+%     };
 
-question_type_list = get_participant_grp(subj_gr);
+question_type_list = get_participant_grp(subj_gr)
 
 
 
@@ -181,8 +185,10 @@ for i_trial = 1:nb_videos
         question_type = question_type_list{video_list_order(i_trial)};
         video = videos_list_name{video_list_order(i_trial)};
     end
+    disp(video_list_order(i_trial))
     disp(video)
     disp(question_type)
+    
     
     switch question_type
         case 'A'
@@ -207,72 +213,72 @@ for i_trial = 1:nb_videos
     disp(movie_name)
     
     % Load movie
-%     DrawFormattedText(win, 'Video algab hetke pärast.',...
-%         'center' , 'center' , opt.text_color);
-%     Screen('Flip', win);
-%     texids = load_movie(movie_name, win);
+    DrawFormattedText(win, 'Video algab hetke pärast.',...
+        'center' , 'center' , opt.text_color);
+    Screen('Flip', win);
+    texids = load_movie(movie_name, win);
     
     
     % Draw fixation at beginning of experiment
-%     DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
-%     Screen('Flip', win);
-%     WaitSecs(opt.dur_fix_cross);
+    DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
+    Screen('Flip', win);
+    WaitSecs(opt.dur_fix_cross);
     
     
     % Question
-%     [RT_question_1] = present_text(question, win, response_box, opt);
-%     if RT_question_1==666
-%         clean_up(response_box);
-%         return
-%     end
+    [RT_question_1] = present_text(question, win, response_box, opt);
+    if RT_question_1==666
+        clean_up(response_box);
+        return
+    end
     
     
     % Show movie
-%     play_movie(movie_name, win);
+    play_movie(movie_name, win);
     
     
     % Question
-%     [RT_question_2] = present_text(question, win, response_box, opt);
-%     if RT_question_2==666
-%         clean_up(response_box);
-%         return
-%     end
+    [RT_question_2] = present_text(question, win, response_box, opt);
+    if RT_question_2==666
+        clean_up(response_box);
+        return
+    end
     
     
     % Type answer
-%     instruction_text = 'Kirjuta vastus järgmisele ekraanile ja vajuta ENTER';
-%     present_text(instruction_text, win, response_box, opt);
-%     [response_text] = type_answer('Vastus:', win, win_w, win_h, response_box, opt);
-%     Screen('Flip', win);
+    instruction_text = 'Kirjuta vastus järgmisele ekraanile ja vajuta ENTER';
+    present_text(instruction_text, win, response_box, opt);
+    [response_text] = type_answer('Vastus:', win, win_w, win_h, response_box, opt);
+    Screen('Flip', win);
     
     
     % Boundary question
-%     instruction = [];
-%     for i_line = 1:size(instructions.boundary)
-%         instruction = [instruction instructions.boundary{i_line} '\n\n']; %#ok<AGROW>
-%     end
-%     present_text(instruction, win, response_box, opt);
+    instruction = [];
+    for i_line = 1:size(instructions.boundary)
+        instruction = [instruction instructions.boundary{i_line} '\n\n']; %#ok<AGROW>
+    end
+    present_text(instruction, win, response_box, opt);
     
     
     % Set boundary of the event
-%     frames = set_event_boundaries(texids, win, win_w, win_h, opt);
-%     if frames==666
-%         clean_up(response_box);
-%         return
-%     end
+    frames = set_event_boundaries(texids, win, win_w, win_h, opt);
+    if frames==666
+        clean_up(response_box);
+        return
+    end
     
     % Close texture
-%     Screen('Close', texids)
-%     clear texids
+    Screen('Close', texids)
+    clear texids
     
     
     % Save data
-%     data(i_trial).frames = frames; %#ok<*SAGROW>
-%     data(i_trial).response_text = response_text;
-%     data(i_trial).RT_question_1 = RT_question_1;
-%     data(i_trial).RT_question_2 = RT_question_2;
-%     data(i_trial).videoname = video;
-%     data(i_trial).condition = question_type;
+    data(i_trial).frames = frames; %#ok<*SAGROW>
+    data(i_trial).response_text = response_text;
+    data(i_trial).RT_question_1 = RT_question_1;
+    data(i_trial).RT_question_2 = RT_question_2;
+    data(i_trial).videoname = video;
+    data(i_trial).condition = question_type;
     
 end
 
