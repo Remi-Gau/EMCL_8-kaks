@@ -37,8 +37,6 @@ response_box = min(keyboard_numbers); % For key presses for the
 % Defines keys
 opt.esc = KbName('ESCAPE');
 opt.return = KbName('return'); 
-opt.right = KbName('RightArrow');
-opt.left = KbName('LeftArrow');
 
 
 %% Screen init
@@ -141,8 +139,11 @@ present_text(instruction, win, response_box, opt);
 
 
 % Set boundary of the event
-set_event_boundaries(texids, win, opt)
-
+frames = set_event_boundaries(texids, win, win_w, win_h, opt);
+if frames==666
+    clean_up(response_box);
+    return
+end
 
 clear texids
 
