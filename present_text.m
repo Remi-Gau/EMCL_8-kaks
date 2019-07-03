@@ -1,10 +1,9 @@
-function [instruction_onset, RT] = present_text(instruction, win, response_box, opt)
+function [RT] = present_text(instruction, win, response_box, opt)
 
 KbQueueCreate(response_box);
 KbQueueStart(response_box);
 
 DrawFormattedText(win, instruction, 'center', 'center', opt.text_color);
-
 instruction_onset = Screen('Flip', win);
 
 while 1
