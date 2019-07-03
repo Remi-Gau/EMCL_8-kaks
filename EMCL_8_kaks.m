@@ -73,7 +73,11 @@ Priority(MaxPriority(win));
 
 
 %% Instruction
-[instruction_onset, RT] = present_text(instructions.general, win, response_box, opt);
+instruction = [];
+for i_line = 1:size(instructions.general)
+    instruction = [instruction instructions.general{i_line} '\n\n']; %#ok<AGROW>
+end
+[RT] = present_text(instruction, win, response_box, opt);
 if RT==666
     clean_up(response_box)
     return
