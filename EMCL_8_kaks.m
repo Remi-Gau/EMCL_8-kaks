@@ -97,6 +97,11 @@ StartExpTime = GetSecs;
 
 movie_name = 'D:\github\EMCL_8-kaks\inputs\videos\CATCH.mp4';
 question = 'What did the BOY do?';
+% Load movie
+DrawFormattedText(win, 'LOADING...',...
+    'center' , 'center' , opt.text_color);
+Screen('Flip', win);
+texids = load_movie(movie_name, win);
 
 
 % draw fixation at beginning of experiment
@@ -136,16 +141,16 @@ DrawFormattedText(win, 'Now mark the beginning and the end of this event.\n\n\nL
 Screen('Flip', win);
 
 
-% Load movie
-texids = load_movie(movie_name, win);
 % Set boundary of the event
 set_event_boundaries(texids, win, opt)
 
 
+clear texids
 
-end
 
-clear texids texpts
+%% Finish
+
+WaitSecs(1)
 
 DrawFormattedText(win, 'Thank you for your participation.', ...
     'center' , 'center' , opt.text_color);
