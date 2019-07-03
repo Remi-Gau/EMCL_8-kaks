@@ -178,7 +178,7 @@ for i_trial = 1:nb_videos
     % Draw fixation at beginning of experiment
     DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
     Screen('Flip', win);
-    WaitSecs(opt.dur_fix_cross)
+    WaitSecs(opt.dur_fix_cross);
     
     
     % Question
@@ -202,8 +202,10 @@ for i_trial = 1:nb_videos
     
     
     % Type answer
-    instruction_text = 'Sisesta oma vastus esitatud küsimusele ja vajuta ENTER.' ;
-    [response_text] = type_answer(instruction_text, win, win_w, win_h, response_box, opt);
+    instruction_text = 'Kirjuta vastus järgmisele ekraanile ja vajuta ENTER';
+    present_text(instruction_text, win, response_box, opt);
+    [response_text] = type_answer('Vastus:', win, win_w, win_h, response_box, opt);
+    Screen('Flip', win);
     
     
     % Boundary question
@@ -221,8 +223,12 @@ for i_trial = 1:nb_videos
         return
     end
     
+    % Close texture
+    Screen('Close', texids)
     clear texids
     
+    
+    % Save data
     data(i_trial).frames = frames; %#ok<*SAGROW>
     data(i_trial).response_text = response_text;
     data(i_trial).RT_question_1 = RT_question_1;

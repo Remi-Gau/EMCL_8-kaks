@@ -2,6 +2,8 @@ function [RT] = present_text(instruction, win, response_box, opt)
 
 RT = [];
 
+ListenChar(0)
+
 KbQueueCreate(response_box);
 KbQueueStart(response_box);
 

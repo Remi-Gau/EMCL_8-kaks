@@ -14,7 +14,7 @@ switch language
             'Kui oled valmis katset alustama, vajuta ENTER.'};
         
         instructions.boundary = {...
-            'Palun märgi videol selle sündmuse algus- ja lõpp-punkt.'
+            'Palun märgi videol selle sündmuse algus- ja lõpp-punkt. (kasuta ARVUTIHIIRT)'
             'Vajuta ENTER kui sa oled valmis edasi liikuma.'};
         
         questions.agent = {'Mida POISS tegi?'};

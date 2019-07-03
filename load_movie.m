@@ -9,7 +9,6 @@ Screen('PlayMovie', movie, 100, 0, 0);
 movietexture=1;     % Texture handle for the current movie frame.
 count=1;
 while movietexture>=0
-    count
     [movietexture pts] = Screen('GetMovieImage', win, movie, 1);
     texids(count) = movietexture;
     count = count + 1;
