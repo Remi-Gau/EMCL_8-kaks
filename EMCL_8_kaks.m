@@ -2,6 +2,10 @@ clear;
 clc;
 sca;
 
+language = 'estonian';
+
+source_folder = fullfile(pwd, 'inputs');
+
 opt.background = 0; % black background
 
 opt.text_color = 255; % white text
@@ -11,10 +15,12 @@ opt.fontsize = 40;
 opt.dur_fix_cross = 1;
 
 Screen('Preference', 'SkipSyncTests', 1)
-
 PsychDebugWindowConfiguration
 
 % try
+
+%% load texts
+[instructions, questions] = text_input(language);
 
 
 %% Keyboard
@@ -64,9 +70,7 @@ Priority(MaxPriority(win));
 
 
 %% Instruction
-instruction = 'Instruction. Press ENTER to move on.';
-
-[instruction_onset, RT] = present_text(instruction, win, response_box, opt);
+[instruction_onset, RT] = present_text(instructions.general, win, response_box, opt);
 if RT==666
     clean_up(response_box)
     return
