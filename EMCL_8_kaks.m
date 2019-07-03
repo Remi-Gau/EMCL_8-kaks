@@ -2,10 +2,14 @@ clear;
 clc;
 sca;
 
+subj_id = input('Subject ID? (00 - 99) ','s');
+subj_grp = input('Subject group? (1, 2, 3) ','s');
+subj_gr = str2double(subj_grp);
+
 language = 'estonian';
 
 debug = 1;
-training = 1;
+training = 0;
 
 opt.background = 255; % black background
 
@@ -15,28 +19,53 @@ opt.fontsize = 40;
 
 opt.dur_fix_cross = 1;
 
+% videos 
+% V1: Squash
+% V4: Catch
+% V2: Knock over
+% V5: Unhook
+% V3: Kick
+% V6: Ripoff
+% V7: Cut
+% V8: Split
+% V9: Break
+% V10: Pop
+% V11: Hit
+% V12: Extinguish
+
+video_list_number = [1 4 2 5 3 6 7 8 9 10 11 12];
+
+question_type_list = get_participant_grp(subj_gr);
+
 
 %% Set Folder
 source_folder = fullfile(pwd, 'inputs');
 output_folder = fullfile(pwd, 'ouputs');
 [~, ~, ~] = mkdir(output_folder);
 
+output_file = fullfile(output_folder, ...
+    ['sub-' subj_id '_grp-' subj_grp '_' datestr(now,'yyyymmdd') '.mat']);
+
 
 %%
 if debug
     PsychDebugWindowConfiguration
 else
-    Screen('Preference', 'SkipSyncTests', 1)
+    Screen('Preference', 'SkipSyncTests', 1) %#ok<*UNRCH>
 end
 
 % try
 
 %% load instructions, question list, video list
 [instructions, questions] = text_input(language);
+questions.all = cat(1, questions.patient, questions.instrument);
 
-[videos_list] = get_videos_list(training);
+[videos_list_name] = get_videos_list(training);
 
-nb_videos = numel(videos_list);
+nb_videos = numel(videos_list_name);
+
+% shuffle everything
+video_list_order = randperm(nb_videos);
 
 
 %% Keyboard
@@ -89,9 +118,9 @@ Priority(MaxPriority(win));
 %% Instruction
 if training
     
-    instruction = [];
+    instruction = []; 
     for i_line = 1:size(instructions.general)
-        instruction = [instruction instructions.general{i_line} '\n\n']; %#ok<AGROW>
+        instruction = [instruction instructions.general{i_line} '\n\n']; 
     end
     
     [RT] = present_text(instruction, win, response_box, opt);
@@ -102,58 +131,42 @@ if training
     
 end
 
-WaitSecs(1)
 
+%% Trial loop
 
+data = [];
 
-%% Start
-StartExpTime = GetSecs;
-
-
-
-%% Trial
-
-for i_vid = 1:nb_videos
+for i_trial = 1:nb_videos
     
     %  get trial info
-    
+    video = videos_list_name{video_list_order(i_trial)};
+
     if training
-        trial_type = 2;
-        question_type = 'N';
+        question_type = 'N'; 
+    else
+        question_type = question_type_list{video_list_order(i_trial)}; 
     end
-    
-    trial_type = 1;
-    
-    switch trial_type
-        case 1 % critical
-            question_type = 'N'; %Neutral / Agent / Patient
-        case 0 % instrument
-            question_type = 'I';
-        case 2 % training
-            question_type = 'T';
-    end
-    
+
     switch question_type
         case 'A'
             question = questions.agent{1};
         case 'N'
             question = questions.neutral{1};
-        case 'I'
-            question = questions.instrument{1};
         case 'P'
-            question = questions.patient{1};
+            question = questions.all{video_list_order(i_trial)};
+        case 'I'
+            question = questions.all{video_list_order(i_trial)};
     end
     
     
     % Get fullpath of movie name
     movie_name = fullfile(source_folder, 'videos');
     if training
-        movie_name = fullfile(movie_name, 'training');
-    elseif trial_type==0
-        movie_name = fullfile(movie_name, 'instruments');
+        movie_name = fullfile(movie_name, 'training'); 
     end
-    movie_name = fullfile(movie_name, [videos_list{i_vid} '.mp4']);
+    movie_name = fullfile(movie_name, [video '.mp4']);
     
+    disp(movie_name)
     
     % Load movie
     DrawFormattedText(win, 'Katse algab hetke pärast.',...
@@ -162,7 +175,7 @@ for i_vid = 1:nb_videos
     texids = load_movie(movie_name, win);
     
     
-    % draw fixation at beginning of experiment
+    % Draw fixation at beginning of experiment
     DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
     Screen('Flip', win);
     WaitSecs(opt.dur_fix_cross)
@@ -210,7 +223,14 @@ for i_vid = 1:nb_videos
     
     clear texids
     
+    data(i_trial).frames = frames; %#ok<*SAGROW>
+    data(i_trial).response_text = response_text;
+    data(i_trial).RT_question_1 = RT_question_1;
+    data(i_trial).RT_question_2 = RT_question_2;
+    
 end
+
+save(output_file);
 
 
 %% Finish
