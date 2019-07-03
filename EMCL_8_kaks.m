@@ -136,9 +136,8 @@ instruction_text = 'Type your answer and press ENTER when finished.   ';
 
 
 % Boundary question
-DrawFormattedText(win, 'Now mark the beginning and the end of this event.\n\n\nLOADING...',...
-    'center' , 'center' , opt.text_color);
-Screen('Flip', win);
+instruction = instructions.boundary{1};
+present_text(instruction, win, response_box, opt);
 
 
 % Set boundary of the event
