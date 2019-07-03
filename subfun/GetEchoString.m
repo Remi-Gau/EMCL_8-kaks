@@ -1,4 +1,4 @@
-function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor, bgColor, useKbCheck, dst_rect, win_h, varargin)
+function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor, bgColor, useKbCheck, varargin)
 % [string,terminatorChar] = GetEchoString(window,msg,x,y,[textColor],[bgColor],[useKbCheck=0],[deviceIndex],[untilTime=inf],[KbCheck args...]);
 % 
 % Get a string typed at the keyboard. Entry is terminated by <return> or
@@ -90,11 +90,7 @@ string = '';
 output = [msg, ' ', string];
 
 % Write the initial message:
-% Screen('DrawText', windowPtr, output, x, y, textColor, bgColor);
-DrawFormattedText(windowPtr, ...
-    output, ...
-    'center' , win_h/5, textColor);
-Screen('FrameRect', windowPtr, textColor, dst_rect, 4);
+Screen('DrawText', windowPtr, output, x, y, textColor, bgColor);
 Screen('Flip', windowPtr, 0, 1);
 
 while true
@@ -111,7 +107,7 @@ while true
     end
 
     switch abs(char)
-        case {13, 3, 10, 27}
+        case {27} %13, 3, 10, 27
             % ctrl-C, enter, return, or escape
             terminatorChar = abs(char);
             break;
@@ -132,11 +128,9 @@ while true
     end
 
     output = [msg, ' ', string];
+    output = WrapString(output, 40);
 %     Screen('DrawText', windowPtr, output, x, y, textColor, bgColor);
-    DrawFormattedText(windowPtr, ...
-        output, ...
-        'center' , win_h/5, textColor);
-    Screen('FrameRect', windowPtr, textColor, dst_rect, 4);
+    DrawFormattedText(windowPtr, output, x, y, textColor,[], 0, 0, 1.5);
     Screen('Flip', windowPtr, 0, 1);
 end
 

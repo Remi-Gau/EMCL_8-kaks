@@ -28,21 +28,34 @@ opt.fontsize = 40;
 
 opt.dur_fix_cross = 1;
 
-% videos
-% V1: Squash
-% V4: Catch
-% V2: Knock over
-% V5: Unhook
-% V3: Kick
-% V6: Ripoff
-% V7: Cut
-% V8: Split
-% V9: Break
-% V10: Pop
-% V11: Hit
-% V12: Extinguish
+% videos_list = {...
+%     'Squash';...
+%     'KnockOver'
+%     'Kick'...
+%     'Unhook';
+%     'Catch';...
+%     'Ripoff';...
+%     'Cut';...
+%     'Split';...
+%     'Break';...
+%     'Pop';...
+%     'Hit';...
+%     'Extinguish';...
+%     };
 
-video_list_number = [1 4 2 5 3 6 7 8 9 10 11 12];
+% question list
+% {'Mis ARBUUSIGA tehti?'  }
+% {'Mis KOONUSEGA tehti?'  }
+% {'Mis JALGPALLIGA tehti?'}
+% {'Mis VÕTMEGA tehti?'    }
+% {'Mis LEHEGA tehti?'     }
+% {'Mis PLAKATIGA tehti?'  }
+% {'Mida NOAGA tehti?'     }
+% {'Mida KIRVEGA tehti?'   }
+% {'Mida VASARAGA tehti?'  }
+% {'Mida NÕELAGA tehti?'   }
+% {'Mida REKETIGA tehti?'  }
+% {'Mida TEKIGA tehti?'    }
 
 question_type_list = get_participant_grp(subj_gr);
 
@@ -166,7 +179,7 @@ for i_trial = 1:nb_videos
         video = videos_list_name{video_list_order(i_trial)};
     else
         question_type = question_type_list{video_list_order(i_trial)};
-        video = videos_list_name{video_list_number(video_list_order(i_trial))};
+        video = videos_list_name{video_list_order(i_trial)};
     end
     disp(video)
     disp(question_type)
