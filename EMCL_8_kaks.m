@@ -8,8 +8,8 @@ subj_gr = str2double(subj_grp);
 
 language = 'estonian';
 
-debug = 1;
-training = 0;
+debug = 0;
+training = 1;
 
 opt.background = 255; % black background
 
@@ -19,7 +19,7 @@ opt.fontsize = 40;
 
 opt.dur_fix_cross = 1;
 
-% videos 
+% videos
 % V1: Squash
 % V4: Catch
 % V2: Knock over
@@ -38,13 +38,20 @@ video_list_number = [1 4 2 5 3 6 7 8 9 10 11 12];
 question_type_list = get_participant_grp(subj_gr);
 
 
+
+
 %% Set Folder
 source_folder = fullfile(pwd, 'inputs');
 output_folder = fullfile(pwd, 'ouputs');
 [~, ~, ~] = mkdir(output_folder);
 
-output_file = fullfile(output_folder, ...
-    ['sub-' subj_id '_grp-' subj_grp '_' datestr(now,'yyyymmdd') '.mat']);
+if training
+    output_file = fullfile(output_folder, ...
+        ['sub-' subj_id '_grp-' subj_grp '_' datestr(now,'yyyymmddTHHMMSS') '_training.mat']);
+else
+    output_file = fullfile(output_folder, ...
+        ['sub-' subj_id '_grp-' subj_grp '_' datestr(now,'yyyymmddTHHMMSS') '.mat']);
+end
 
 
 %%
@@ -118,9 +125,9 @@ Priority(MaxPriority(win));
 %% Instruction
 if training
     
-    instruction = []; 
+    instruction = [];
     for i_line = 1:size(instructions.general)
-        instruction = [instruction instructions.general{i_line} '\n\n']; 
+        instruction = [instruction instructions.general{i_line} '\n\n'];
     end
     
     [RT] = present_text(instruction, win, response_box, opt);
@@ -140,13 +147,13 @@ for i_trial = 1:nb_videos
     
     %  get trial info
     video = videos_list_name{video_list_order(i_trial)};
-
+    
     if training
-        question_type = 'N'; 
+        question_type = 'N';
     else
-        question_type = question_type_list{video_list_order(i_trial)}; 
+        question_type = question_type_list{video_list_order(i_trial)};
     end
-
+    
     switch question_type
         case 'A'
             question = questions.agent{1};
@@ -162,7 +169,7 @@ for i_trial = 1:nb_videos
     % Get fullpath of movie name
     movie_name = fullfile(source_folder, 'videos');
     if training
-        movie_name = fullfile(movie_name, 'training'); 
+        movie_name = fullfile(movie_name, 'training');
     end
     movie_name = fullfile(movie_name, [video '.mp4']);
     
