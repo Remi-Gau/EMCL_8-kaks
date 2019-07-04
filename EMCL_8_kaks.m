@@ -3,7 +3,7 @@ clc;
 sca;
 
 subj_id = input('Subject ID? (00 - 99) ','s');
-subj_id = str2double(subj_id);
+% subj_id = str2double(subj_id);
 
 subj_grp = input('Subject group? (1, 2, 3) ','s');
 subj_gr = str2double(subj_grp);
@@ -15,7 +15,7 @@ comp_prefix = 'r'; % r - Remi ; l - Liis ; n - Norbert ???
 
 language = 'estonian';
 
-debug = 1;
+debug = 0;
 
 opt.background = 255; % black background
 
@@ -73,13 +73,13 @@ output_folder = fullfile(pwd, 'ouputs');
 if training
     output_file = fullfile(output_folder, ...
         ['comp-' comp_prefix ...
-        'sub-' sprintf('0%3.0f', subj_id) ...
+        'sub-' subj_id ...
         '_grp-P' subj_grp ...
         '_' datestr(now,'yyyymmddTHHMMSS') '_training.mat']);
 else
     output_file = fullfile(output_folder, ...
         ['comp-' comp_prefix ...
-        'sub-' sprintf('0%3.0f', subj_id) ...
+        'sub-' subj_id ...
         '_grp-P' subj_grp ...
         '_' datestr(now,'yyyymmddTHHMMSS') '.mat']);
 end
@@ -279,6 +279,7 @@ for i_trial = 1:nb_videos
     data(i_trial).RT_question_2 = RT_question_2;
     data(i_trial).videoname = video;
     data(i_trial).condition = question_type;
+    save(output_file);
     
 end
 
