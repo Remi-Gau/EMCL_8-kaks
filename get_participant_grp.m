@@ -33,11 +33,11 @@ switch subj_gr
     case 3
         question_type_list = {
             'N'
-            'A'
             'P'
+            'A'
             'N'
-            'A'
             'P'
+            'A'
             'I'
             'I'
             'I'
