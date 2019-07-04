@@ -11,14 +11,11 @@ subj_gr = str2double(subj_grp);
 training = input('Is this training? (0 = No ; 1 = Yes) ','s');
 training = str2double(training);
 
-
-
-
 comp_prefix = 'r'; % r - Remi ; l - Liis ; n - Norbert ???
 
 language = 'estonian';
 
-debug = 0;
+debug = 1;
 
 opt.background = 255; % black background
 
@@ -61,12 +58,14 @@ opt.dur_fix_cross = 1;
 %     'Mida TEKIGA tehti?'; ...
 %     };
 
-question_type_list = get_participant_grp(subj_gr)
+question_type_list = get_participant_grp(subj_gr);
 
 
 
 
 %% Set Folder
+addpath(fullfile(pwd, 'subfun'));
+
 source_folder = fullfile(pwd, 'inputs');
 output_folder = fullfile(pwd, 'ouputs');
 [~, ~, ~] = mkdir(output_folder);
@@ -91,6 +90,7 @@ if debug
     PsychDebugWindowConfiguration
 else
     Screen('Preference', 'SkipSyncTests', 1) %#ok<*UNRCH>
+    oldEnableFlag = Screen('Preference', 'SuppressAllWarnings', 1);
 end
 
 % try
@@ -248,7 +248,7 @@ for i_trial = 1:nb_videos
     % Type answer
     instruction_text = 'Kirjuta vastus järgmisele ekraanile ja vajuta ENTER';
     present_text(instruction_text, win, response_box, opt);
-    [response_text] = type_answer('Vastus:', win, win_w, win_h, response_box, opt);
+    [response_text] = type_answer('Vastus:', win, win_w, win_h, opt);
     Screen('Flip', win);
     
     

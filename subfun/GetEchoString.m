@@ -1,4 +1,4 @@
-function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor, bgColor, useKbCheck, varargin)
+function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor, bgColor, useKbCheck, dst_rect, varargin)
 % [string,terminatorChar] = GetEchoString(window,msg,x,y,[textColor],[bgColor],[useKbCheck=0],[deviceIndex],[untilTime=inf],[KbCheck args...]);
 % 
 % Get a string typed at the keyboard. Entry is terminated by <return> or
@@ -67,16 +67,6 @@ if nargin < 6
     bgColor = [];
 end
 
-% Enable user defined alpha blending if a text background color is
-% specified. This makes text background colors actually work, e.g., on OSX:
-if ~isempty(bgColor)
-    if Screen('Preference', 'TextRenderer') >= 1
-        oldalpha = Screen('Preference', 'TextAlphaBlending', 0);
-    else
-        oldalpha = Screen('Preference', 'TextAlphaBlending', 1-IsLinux);
-    end
-end
-
 if nargin < 5
     textColor = [];
 end
@@ -90,7 +80,12 @@ string = '';
 output = [msg, ' ', string];
 
 % Write the initial message:
-Screen('DrawText', windowPtr, output, x, y, textColor, bgColor);
+DrawFormattedText(windowPtr, output, x, y, textColor,[], 0, 0, 1.5);
+
+Screen('FrameRect', windowPtr, textColor, ...
+    dst_rect, ...
+    2);
+
 Screen('Flip', windowPtr, 0, 1);
 
 while true
@@ -107,19 +102,13 @@ while true
     end
 
     switch abs(char)
-        case {27} %13, 3, 10, 27
+        case {27, 13} %13, 3, 10, 27
             % ctrl-C, enter, return, or escape
             terminatorChar = abs(char);
             break;
         case 8
             % backspace
             if ~isempty(string)
-                % Redraw text string, but with textColor == bgColor, so
-                % that the old string gets completely erased:
-                oldTextColor = Screen('TextColor', windowPtr);
-                Screen('DrawText', windowPtr, output, x, y, bgColor, bgColor);
-                Screen('TextColor', windowPtr, oldTextColor);
-
                 % Remove last character from string:
                 string = string(1:length(string)-1);
             end
@@ -128,15 +117,15 @@ while true
     end
 
     output = [msg, ' ', string];
-    output = WrapString(output, 40);
-%     Screen('DrawText', windowPtr, output, x, y, textColor, bgColor);
-    DrawFormattedText(windowPtr, output, x, y, textColor,[], 0, 0, 1.5);
-    Screen('Flip', windowPtr, 0, 1);
-end
+    output = WrapString(output, 80);
 
-% Restore text alpha blending state if it was altered:
-if ~isempty(bgColor)
-    Screen('Preference', 'TextAlphaBlending', oldalpha);
+    DrawFormattedText(windowPtr, output, x, y, textColor,[], 0, 0, 1.5);
+    
+    Screen('FrameRect', windowPtr, textColor, ...
+        dst_rect, ...
+        2);
+    
+    Screen('Flip', windowPtr, 0, 0);
 end
 
 return;
