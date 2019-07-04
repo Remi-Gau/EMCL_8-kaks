@@ -1,6 +1,6 @@
 function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor, bgColor, useKbCheck, dst_rect, varargin)
 % [string,terminatorChar] = GetEchoString(window,msg,x,y,[textColor],[bgColor],[useKbCheck=0],[deviceIndex],[untilTime=inf],[KbCheck args...]);
-% 
+%
 % Get a string typed at the keyboard. Entry is terminated by <return> or
 % <enter>.
 %
@@ -38,7 +38,7 @@ function [string,terminatorChar] = GetEchoString(windowPtr, msg, x, y, textColor
 % 2/4/97    dhb       Wrote GetEchoNumber.
 % 2/5/97    dhb       Accept <enter> as well as <cr>.
 %           dhb       Allow string return as well.
-% 3/3/97    dhb       Updated for new DrawText.  
+% 3/3/97    dhb       Updated for new DrawText.
 % 3/15/97   dgp       Created GetEchoString based on dhb's GetEchoNumber.
 % 3/20/97   dhb       Fixed bug in erase code, it wasn't updated for new
 %                       initialization.
@@ -94,13 +94,13 @@ while true
     else
         char = GetChar;
     end
-
+    
     if isempty(char)
         string = '';
         terminatorChar = 0;
         break;
     end
-
+    
     switch abs(char)
         case {27, 13} %13, 3, 10, 27
             % ctrl-C, enter, return, or escape
@@ -113,12 +113,44 @@ while true
                 string = string(1:length(string)-1);
             end
         otherwise
+            
+            % dirtiest to create an estonian keyboardÖ I am sorry mum.
+            % Donät hate me.
+            switch char
+                case '['
+                    char = 'ü';
+                case ']'
+                    char = 'õ';
+                case '{'
+                    char = 'Ü';
+                case '}'
+                    char = 'Õ';
+                case ';'
+                    char = 'ö';
+                case ':'
+                    char = 'Ö';
+                case "'"
+                    char = 'ä';
+                case "@"
+                    char = 'Ä';
+                case "<"
+                    char = ';';
+                case ">"
+                    char = ':';
+                case "?"
+                    char = '_';
+                case "/"
+                    char = '-';
+                case "_"
+                    char = '?';
+            end
+            
             string = [string, char]; %#ok<AGROW>
     end
-
+    
     output = [msg, ' ', string];
     output = WrapString(output, 80);
-
+    
     DrawFormattedText(windowPtr, output, x, y, textColor,[], 0, 0, 1.5);
     
     Screen('FrameRect', windowPtr, textColor, ...

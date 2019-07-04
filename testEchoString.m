@@ -14,12 +14,11 @@ dst_rect = [...
     win_w/20 - 30 ...
     win_h/4 - 30 ...
     win_w*19/20 + 30 ...
-    win_h*3/4 + 30 ]
+    win_h*3/4 + 30 ];
 
+% AssertOpenGL;
 
-AssertOpenGL;
-
-KbName('UnifyKeyNames');
+% KbName('UnifyKeyNames');
 [keyboard_numbers, keyboard_names] = GetKeyboardIndices;
 response_box = min(keyboard_numbers);
 
