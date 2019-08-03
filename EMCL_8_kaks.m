@@ -15,7 +15,8 @@ comp_prefix = 'r'; % r - Remi ; l - Liis ; n - Norbert ???
 
 language = 'estonian';
 
-debug = 0;
+debug = 1;
+make_screen_capture = 1;
 
 opt.background = 255; % black background
 
@@ -84,6 +85,13 @@ else
         '_' datestr(now,'yyyymmddTHHMMSS') '.mat']);
 end
 
+if make_screen_capture
+    screen_capture_folder = fullfile(output_folder, 'screen_capture');
+    mkdir(screen_capture_folder)
+    screen_capture_filename = fullfile(screen_capture_folder, ...
+        'EMCL_kaks_frame-');
+end
+
 
 %%
 if debug
@@ -102,6 +110,10 @@ questions.all = cat(1, questions.patient, questions.instrument);
 [videos_list_name] = get_videos_list(training);
 
 nb_videos = numel(videos_list_name);
+if make_screen_capture
+    nb_videos = 1;
+    frame2print = 1;
+end
 
 % shuffle everything
 video_list_order = randperm(nb_videos);
@@ -198,7 +210,7 @@ for i_trial = 1:nb_videos
         case 'P'
             question = questions.all{video_list_order(i_trial)};
         case 'I'
-            question = questions.all{video_list_order(i_trial)};
+            question = questions.all{video_list_order(i_trial)}; 
     end
     disp(question)
     
@@ -216,12 +228,19 @@ for i_trial = 1:nb_videos
     DrawFormattedText(win, 'Video algab hetke pärast.',...
         'center' , 'center' , opt.text_color);
     Screen('Flip', win);
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
+    end
+    
     texids = load_movie(movie_name, win);
     
     
     % Draw fixation at beginning of experiment
     DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
     Screen('Flip', win);
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
+    end
     WaitSecs(opt.dur_fix_cross);
     
     
@@ -230,6 +249,9 @@ for i_trial = 1:nb_videos
     if RT_question_1==666
         clean_up(response_box);
         return
+    end
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
     end
     
     
@@ -250,6 +272,9 @@ for i_trial = 1:nb_videos
     present_text(instruction_text, win, response_box, opt);
     [response_text] = type_answer('Vastus:', win, win_w, win_h, opt);
     Screen('Flip', win);
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
+    end
     
     
     % Boundary question
@@ -258,10 +283,14 @@ for i_trial = 1:nb_videos
         instruction = [instruction instructions.boundary{i_line} '\n\n']; %#ok<AGROW>
     end
     present_text(instruction, win, response_box, opt);
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
+    end
     
     
     % Set boundary of the event
-    frames = set_event_boundaries(texids, win, win_w, win_h, opt);
+    [frames, frame2print] = set_event_boundaries(texids, win, win_w, win_h, opt, ...
+        make_screen_capture, screen_capture_filename, frame2print);
     if frames==666
         clean_up(response_box);
         return
@@ -298,6 +327,9 @@ end
 DrawFormattedText(win, goodbye_msg, ...
     'center' , 'center' , opt.text_color);
 Screen('Flip', win);
+if make_screen_capture
+    frame2print = print_screen(win, screen_capture_filename, frame2print);
+end
 
 WaitSecs(2)
 

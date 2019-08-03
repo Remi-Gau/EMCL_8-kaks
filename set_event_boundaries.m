@@ -1,4 +1,4 @@
-function [frames] = set_event_boundaries(texids, win, win_w, win_h, opt)
+function [frames, frame2print] = set_event_boundaries(texids, win, win_w, win_h, opt, make_screen_capture, screen_capture_filename, frame2print)
 
 frames = NaN;
 
@@ -56,6 +56,9 @@ while 1
     
     % Show drawn stuff
     Screen('Flip', win);
+    if make_screen_capture
+        frame2print = print_screen(win, screen_capture_filename, frame2print);
+    end
     
     
     % Get mouse info and update info to display
