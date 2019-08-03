@@ -30,6 +30,8 @@ SubNb = 0;
 for i_file = 1:numel(file_ls)
     
     if ~contains(file_ls(i_file).name, 'training')
+        
+        SubNb = SubNb + 1;
 
         load(fullfile(output_folder, file_ls(i_file).name), ...
             'subj_grp', 'comp_prefix', 'subj_id', 'data')
@@ -40,12 +42,20 @@ for i_file = 1:numel(file_ls)
             subj_id = num2str(subj_id);
         end
         
+        file_ls(i_file).name;
+        numel(data);
+        
         for i_trial = 1:numel(data)
             
             if data(i_trial).condition=='I'
                 VideoType='filler';
             else
                 VideoType='experimental';
+            end
+            
+            if strcmp(data(i_trial).videoname, 'Catch')
+                disp(data(i_trial).videoname)
+                disp(data(i_trial).condition)
             end
             
             time_stamp_idx = strfind(file_ls(i_file).name, '2019');
