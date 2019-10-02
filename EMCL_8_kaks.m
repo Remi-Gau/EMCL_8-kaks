@@ -16,7 +16,7 @@ comp_prefix = 'r'; % r - Remi ; l - Liis ; n - Norbert ???
 language = 'estonian';
 
 debug = 1;
-make_screen_capture = 1;
+make_screen_capture = 0;
 
 opt.background = 255; % black background
 
@@ -46,7 +46,7 @@ opt.dur_fix_cross = 1;
 %     'Mida ARBUUSIGA tehti?'; ...
 %     'Mida KOONUSEGA tehti?'; ...
 %     'Mida JALGPALLIGA tehti?'; ...
-%     'Mida VÕTMEGA tehti?'; ...
+%     'Mida Vï¿½TMEGA tehti?'; ...
 %     'Mida LEHEGA tehti?'; ...
 %     'Mida PLAKATIGA tehti?'; ...
 %     };
@@ -54,7 +54,7 @@ opt.dur_fix_cross = 1;
 %     'Mida NOAGA tehti?'; ...
 %     'Mida KIRVEGA tehti?'; ...
 %     'Mida VASARAGA tehti?'; ...
-%     'Mida NÕELAGA tehti?'; ...
+%     'Mida Nï¿½ELAGA tehti?'; ...
 %     'Mida REKETIGA tehti?'; ...
 %     'Mida TEKIGA tehti?'; ...
 %     };
@@ -101,247 +101,248 @@ else
     oldEnableFlag = Screen('Preference', 'SuppressAllWarnings', 1);
 end
 
-% try
-
-%% load instructions, question list, video list
-[instructions, questions] = text_input(language);
-questions.all = cat(1, questions.patient, questions.instrument);
-
-[videos_list_name] = get_videos_list(training);
-
-nb_videos = numel(videos_list_name);
-if make_screen_capture
-    nb_videos = 1;
-    frame2print = 1;
-end
-
-% shuffle everything
-video_list_order = randperm(nb_videos);
-
-
-%% Keyboard
-
-% Switch KbName into unified mode: It will use the names of
-% the OS-X platform on all platforms in order to make this script portable:
-KbName('UnifyKeyNames');
-
-ListenChar(0)
-
-[keyboard_numbers, keyboard_names] = GetKeyboardIndices;
-response_box = min(keyboard_numbers); % For key presses for the
-
-% Defines keys
-opt.esc = KbName('ESCAPE');
-opt.return = KbName('return');
-
-
-%% Screen init
-% Choosing the display with the highest display number
-% is a best guess about where you want the stimulus displayed.
-% Usually there will be only one screen with id = 0,
-% unless you use a multi-display setup.
-screen_ID = max(Screen('Screens'));
-
-% Open 'windowrect' sized window on screen
-[win, win_rect] = Screen('OpenWindow', screen_ID, opt.background);
-
-win_w = (win_rect(3) - win_rect(1));
-win_h = (win_rect(4) - win_rect(2));
-
-% Child protection: Make sure we run on the OSX / OpenGL Psychtoolbox.
-% Abort if we don't:
-AssertOpenGL;
-
-
-ifi = Screen('GetFlipInterval', win);
-FrameRate = Screen('FrameRate', screen_ID);
-if FrameRate == 0
-    FrameRate = 1/ifi;
-end
-
-Screen(win, 'TextFont', opt.font);
-Screen(win, 'TextSize', opt.fontsize);
-
-Priority(MaxPriority(win));
-
-
-
-%% Instruction
-if training
+try
     
-    instruction = [];
-    for i_line = 1:size(instructions.general)
-        instruction = [instruction instructions.general{i_line} '\n\n'];
+    %% load instructions, question list, video list
+    [instructions, questions] = text_input(language);
+    questions.all = cat(1, questions.patient, questions.instrument);
+    
+    [videos_list_name] = get_videos_list(training);
+    
+    nb_videos = numel(videos_list_name);
+    if make_screen_capture
+        nb_videos = 1;
+        frame2print = 1;
     end
     
-    [RT] = present_text(instruction, win, response_box, opt);
-    if RT==666
-        clean_up(response_box)
-        return
+    % shuffle everything
+    video_list_order = randperm(nb_videos);
+    
+    
+    %% Keyboard
+    
+    % Switch KbName into unified mode: It will use the names of
+    % the OS-X platform on all platforms in order to make this script portable:
+    KbName('UnifyKeyNames');
+    
+    ListenChar(0)
+    
+    [keyboard_numbers, keyboard_names] = GetKeyboardIndices;
+    response_box = min(keyboard_numbers); % For key presses for the
+    
+    % Defines keys
+    opt.esc = KbName('ESCAPE');
+    opt.return = KbName('return');
+    
+    
+    %% Screen init
+    % Choosing the display with the highest display number
+    % is a best guess about where you want the stimulus displayed.
+    % Usually there will be only one screen with id = 0,
+    % unless you use a multi-display setup.
+    screen_ID = max(Screen('Screens'));
+    
+    % Open 'windowrect' sized window on screen
+    [win, win_rect] = Screen('OpenWindow', screen_ID, opt.background);
+    
+    win_w = (win_rect(3) - win_rect(1));
+    win_h = (win_rect(4) - win_rect(2));
+    
+    % Child protection: Make sure we run on the OSX / OpenGL Psychtoolbox.
+    % Abort if we don't:
+    AssertOpenGL;
+    
+    
+    ifi = Screen('GetFlipInterval', win);
+    FrameRate = Screen('FrameRate', screen_ID);
+    if FrameRate == 0
+        FrameRate = 1/ifi;
     end
     
-end
-
-
-%% Trial loop
-
-data = [];
-
-for i_trial = 1:nb_videos
+    Screen(win, 'TextFont', opt.font);
+    Screen(win, 'TextSize', opt.fontsize);
     
-    %  get trial info
+    Priority(MaxPriority(win));
+    
+    
+    
+    %% Instruction
     if training
-        question_type = 'N';
-        video = videos_list_name{video_list_order(i_trial)};
+        
+        instruction = [];
+        for i_line = 1:size(instructions.general)
+            instruction = [instruction instructions.general{i_line} '\n\n'];
+        end
+        
+        [RT] = present_text(instruction, win, response_box, opt);
+        if RT==666
+            clean_up(response_box)
+            return
+        end
+        
+    end
+    
+    
+    %% Trial loop
+    
+    data = [];
+    
+    for i_trial = 1:nb_videos
+        
+        %  get trial info
+        if training
+            question_type = 'N';
+            video = videos_list_name{video_list_order(i_trial)};
+        else
+            question_type = question_type_list{video_list_order(i_trial)};
+            video = videos_list_name{video_list_order(i_trial)};
+        end
+        disp(video_list_order(i_trial))
+        disp(video)
+        disp(question_type)
+        
+        
+        switch question_type
+            case 'A'
+                question = questions.agent{1};
+            case 'N'
+                question = questions.neutral{1};
+            case 'P'
+                question = questions.all{video_list_order(i_trial)};
+            case 'I'
+                question = questions.all{video_list_order(i_trial)};
+        end
+        disp(question)
+        
+        
+        % Get fullpath of movie name
+        movie_name = fullfile(source_folder, 'videos');
+        if training
+            movie_name = fullfile(movie_name, 'training');
+        end
+        movie_name = fullfile(movie_name, [video '.mp4']);
+        
+        disp(movie_name)
+        
+        % Load movie
+        DrawFormattedText(win, 'Video algab hetke pï¿½rast.',...
+            'center' , 'center' , opt.text_color);
+        Screen('Flip', win);
+        if make_screen_capture
+            frame2print = print_screen(win, screen_capture_filename, frame2print);
+        end
+        
+        texids = load_movie(movie_name, win);
+        
+        
+        % Draw fixation at beginning of experiment
+        DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
+        Screen('Flip', win);
+        if make_screen_capture
+            frame2print = print_screen(win, screen_capture_filename, frame2print);
+        end
+        WaitSecs(opt.dur_fix_cross);
+        
+        
+        % Question
+        [RT_question_1] = present_text(question, win, response_box, opt);
+        if RT_question_1==666
+            clean_up(response_box);
+            return
+        end
+        if make_screen_capture
+            frame2print = print_screen(win, screen_capture_filename, frame2print);
+        end
+        
+        
+        % Show movie
+        play_movie(movie_name, win);
+        
+        
+        % Question
+        [RT_question_2] = present_text(question, win, response_box, opt);
+        if RT_question_2==666
+            clean_up(response_box);
+            return
+        end
+        
+        
+        % Type answer
+        instruction_text = 'Kirjuta vastus jï¿½rgmisele ekraanile ja vajuta ENTER';
+        present_text(instruction_text, win, response_box, opt);
+        [response_text] = type_answer('Vastus:', win, win_w, win_h, opt);
+        Screen('Flip', win);
+        if make_screen_capture
+            frame2print = print_screen(win, screen_capture_filename, frame2print);
+        end
+        
+        
+        % Boundary question
+        instruction = [];
+        for i_line = 1:size(instructions.boundary)
+            instruction = [instruction instructions.boundary{i_line} '\n\n']; %#ok<AGROW>
+        end
+        present_text(instruction, win, response_box, opt);
+        if make_screen_capture
+            frame2print = print_screen(win, screen_capture_filename, frame2print);
+        end
+        
+        
+        % Set boundary of the event
+        [frames, frame2print] = set_event_boundaries(texids, win, win_w, win_h, opt, ...
+            make_screen_capture, screen_capture_filename, frame2print);
+        if frames==666
+            clean_up(response_box);
+            return
+        end
+        
+        % Close texture
+        Screen('Close', texids)
+        clear texids
+        
+        
+        % Save data
+        data(i_trial).frames = frames; %#ok<*SAGROW>
+        data(i_trial).response_text = response_text;
+        data(i_trial).RT_question_1 = RT_question_1;
+        data(i_trial).RT_question_2 = RT_question_2;
+        data(i_trial).videoname = video;
+        data(i_trial).condition = question_type;
+        save(output_file);
+        
+    end
+    
+    save(output_file);
+    
+    
+    %% Finish
+    
+    WaitSecs(1)
+    
+    if training
+        goodbye_msg = 'Harjutamine on lï¿½bi. Kas sul on katse kohta kï¿½simusi?';
     else
-        question_type = question_type_list{video_list_order(i_trial)};
-        video = videos_list_name{video_list_order(i_trial)};
+        goodbye_msg = 'Aitï¿½h katses osalemise eest!';
     end
-    disp(video_list_order(i_trial))
-    disp(video)
-    disp(question_type)
-    
-    
-    switch question_type
-        case 'A'
-            question = questions.agent{1};
-        case 'N'
-            question = questions.neutral{1};
-        case 'P'
-            question = questions.all{video_list_order(i_trial)};
-        case 'I'
-            question = questions.all{video_list_order(i_trial)}; 
-    end
-    disp(question)
-    
-    
-    % Get fullpath of movie name
-    movie_name = fullfile(source_folder, 'videos');
-    if training
-        movie_name = fullfile(movie_name, 'training');
-    end
-    movie_name = fullfile(movie_name, [video '.mp4']);
-    
-    disp(movie_name)
-    
-    % Load movie
-    DrawFormattedText(win, 'Video algab hetke pärast.',...
+    DrawFormattedText(win, goodbye_msg, ...
         'center' , 'center' , opt.text_color);
     Screen('Flip', win);
     if make_screen_capture
         frame2print = print_screen(win, screen_capture_filename, frame2print);
     end
     
-    texids = load_movie(movie_name, win);
+    WaitSecs(2)
     
     
-    % Draw fixation at beginning of experiment
-    DrawFormattedText(win, '+', 'center' , 'center' , opt.text_color);
-    Screen('Flip', win);
-    if make_screen_capture
-        frame2print = print_screen(win, screen_capture_filename, frame2print);
-    end
-    WaitSecs(opt.dur_fix_cross);
     
     
-    % Question
-    [RT_question_1] = present_text(question, win, response_box, opt);
-    if RT_question_1==666
-        clean_up(response_box);
-        return
-    end
-    if make_screen_capture
-        frame2print = print_screen(win, screen_capture_filename, frame2print);
-    end
+    %% Close
+    clean_up(response_box)
     
     
-    % Show movie
-    play_movie(movie_name, win);
+catch
     
-    
-    % Question
-    [RT_question_2] = present_text(question, win, response_box, opt);
-    if RT_question_2==666
-        clean_up(response_box);
-        return
-    end
-    
-    
-    % Type answer
-    instruction_text = 'Kirjuta vastus järgmisele ekraanile ja vajuta ENTER';
-    present_text(instruction_text, win, response_box, opt);
-    [response_text] = type_answer('Vastus:', win, win_w, win_h, opt);
-    Screen('Flip', win);
-    if make_screen_capture
-        frame2print = print_screen(win, screen_capture_filename, frame2print);
-    end
-    
-    
-    % Boundary question
-    instruction = [];
-    for i_line = 1:size(instructions.boundary)
-        instruction = [instruction instructions.boundary{i_line} '\n\n']; %#ok<AGROW>
-    end
-    present_text(instruction, win, response_box, opt);
-    if make_screen_capture
-        frame2print = print_screen(win, screen_capture_filename, frame2print);
-    end
-    
-    
-    % Set boundary of the event
-    [frames, frame2print] = set_event_boundaries(texids, win, win_w, win_h, opt, ...
-        make_screen_capture, screen_capture_filename, frame2print);
-    if frames==666
-        clean_up(response_box);
-        return
-    end
-    
-    % Close texture
-    Screen('Close', texids)
-    clear texids
-    
-    
-    % Save data
-    data(i_trial).frames = frames; %#ok<*SAGROW>
-    data(i_trial).response_text = response_text;
-    data(i_trial).RT_question_1 = RT_question_1;
-    data(i_trial).RT_question_2 = RT_question_2;
-    data(i_trial).videoname = video;
-    data(i_trial).condition = question_type;
-    save(output_file);
+    clean_up(response_box)
+    psychrethrow(psychlasterror);
     
 end
-
-save(output_file);
-
-
-%% Finish
-
-WaitSecs(1)
-
-if training
-    goodbye_msg = 'Harjutamine on läbi. Kas sul on katse kohta küsimusi?';
-else
-    goodbye_msg = 'Aitäh katses osalemise eest!';
-end
-DrawFormattedText(win, goodbye_msg, ...
-    'center' , 'center' , opt.text_color);
-Screen('Flip', win);
-if make_screen_capture
-    frame2print = print_screen(win, screen_capture_filename, frame2print);
-end
-
-WaitSecs(2)
-
-
-
-
-%% Close
-clean_up(response_box)
-
-
-% catch
-%
-%     clean_up(response_box)
-%     psychrethrow(psychlasterror);
-% end
